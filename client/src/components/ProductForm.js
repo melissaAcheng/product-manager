@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const ProductForm = () => {
+const ProductForm = ({ product, setProduct }) => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState(0.0);
   const [description, setDescription] = useState("");
-  // const [products, setProducts] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // const newProduct = {
-    //   title,
-    //   price,
-    //   description,
-    // };
-    // setProducts(products.push(newProduct));
-
     axios
       .post("http://localhost:8000/api/product", {
         title,
@@ -26,6 +17,7 @@ const ProductForm = () => {
       .then((res) => {
         console.log(res);
         console.log(res.data);
+        setProduct([...product, res.data]);
         setTitle("");
         setPrice(0);
         setDescription("");
@@ -35,6 +27,7 @@ const ProductForm = () => {
 
   return (
     <div>
+      <h1>Add Product</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Title:</label>
