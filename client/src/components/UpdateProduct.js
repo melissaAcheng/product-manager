@@ -1,34 +1,48 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-const ProductForm = ({ product, setProduct }) => {
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState(0.0);
-  const [description, setDescription] = useState("");
+const UpdateProduct = (props) => {
+  const [title, setTitle] = useState();
+  const [price, setPrice] = useState();
+  const [description, setDescription] = useState();
 
-  const handleSubmit = (e) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8000/api/product/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        setTitle(res.data.title);
+        setPrice(res.data.price);
+        setDescription(res.data.description);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const updateProduct = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:8000/api/product", {
+      .put(`http://localhost:8000/api/product/${id}`, {
         title,
         price,
         description,
       })
-      .then((res) => {
-        console.log(res);
-        console.log(res.data);
-        setProduct([...product, res.data]);
-        setTitle("");
-        setPrice(0);
-        setDescription("");
+      .then((updatedProduct) => {
+        console.log(updatedProduct);
+        navigate(`/product/${id}`);
       })
       .catch((err) => console.log(err));
   };
 
   return (
     <div>
-      <h1>Add Product</h1>
-      <form onSubmit={handleSubmit}>
+      <h1>Update Product</h1>
+      <form onSubmit={updateProduct}>
         <div>
           <label className="mr-2">Title:</label>
           <input
@@ -54,7 +68,21 @@ const ProductForm = ({ product, setProduct }) => {
           <input
             type="text"
             value={description}
-            className="w-40 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus: ring-indigo-500"
+            className="form-control
+            block
+            w-full
+            px-3
+            py-1.5
+            text-base
+            font-normal
+            text-gray-700
+            bg-white bg-clip-padding
+            border border-solid border-gray-300
+            rounded
+            transition
+            ease-in-out
+            m-0
+            focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
@@ -64,4 +92,4 @@ const ProductForm = ({ product, setProduct }) => {
   );
 };
 
-export default ProductForm;
+export default UpdateProduct;
