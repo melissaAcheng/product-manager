@@ -6,6 +6,7 @@ import ProductForm from "./ProductForm";
 const UpdateProduct = (props) => {
   const [product, setProduct] = useState({});
   const [loaded, setLoaded] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,7 +31,10 @@ const UpdateProduct = (props) => {
         console.log(res);
         navigate(`/product/${id}`);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setErrors(err.response.data.errors);
+      });
   };
 
   return (
@@ -42,6 +46,7 @@ const UpdateProduct = (props) => {
           initialTitle={product.title}
           initialPrice={product.price}
           initialDescription={product.description}
+          errors={errors}
         />
       )}
     </div>
